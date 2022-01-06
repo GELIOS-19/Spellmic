@@ -67,21 +67,20 @@ std::tuple<float, std::vector<std::array<float, 2>>> riemann_sum(
   return std::make_tuple(sum, table);
 }
 
-int main() {
+int main(int argc, char const* argv[]) {
   const auto& result = riemann_sum([](const float x) {
                                      return static_cast<float>(4 * x - pow(x, 2));
                                    },
                                    {0, 4},
                                    "MRAM",
-                                   4);
+                                   100);
   const auto& sum = std::get<0>(result);
   const auto& table = std::get<1>(result);
-  
-  printf("sum:\n....%f\n", sum);
-  printf("table:\n");
+
+  printf("sum:\n...%f\ntable:\n", sum);
   for (const auto& tableEntry : table) {
-    printf("....(%f, %f)\n", tableEntry[0], tableEntry[1]);
+    printf("...(%f, %f)\n", tableEntry[0], tableEntry[1]);
   }
-  
+
   return 0;
 }
