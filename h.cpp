@@ -1,15 +1,18 @@
 #include <array>
-#include <cstdint>
 #include <cmath>
+#include <cstdint>
 #include <format>
 #include <iostream>
 #include <tuple>
 #include <vector>
 
-#define MID_POINT_FORMULA(LEFT, RIGHT) (LEFT + RIGHT) / 2.0F
+inline float midpoint_formula(float left, float right) {
+  return (left + right) / 2.0f;
+}
 
 template <typename Type>
-int32_t vector_find_index(const std::vector<Type>& vector, const Type& element) {
+int32_t vector_find_index(const std::vector<Type>& vector,
+                          const Type& element) {
   auto it = std::find(vector.begin(), vector.end(), element);
   if (it != vector.end()) {
     return it - vector.begin();
@@ -27,14 +30,13 @@ std::vector<Type> find_range(Type begin, Type end, Type step = 1) {
 }
 
 std::tuple<float, std::vector<std::array<float, 2>>> riemann_sum(
-    const auto& equation,
-    const std::array<float, 2>& range,
-    const char algorithm[],
-    const int& numberOfRectangles = 1) {
+    const auto& equation, const std::array<float, 2>& range,
+    const char algorithm[], const int& numberOfRectangles = 1) {
   float sum = 0.0F;
   std::vector<std::array<float, 2>> table;
 
-  const float step = abs(range[1] - range[0]) / static_cast<float>(numberOfRectangles);
+  const float step =
+      abs(range[1] - range[0]) / static_cast<float>(numberOfRectangles);
   for (const auto& value : find_range(range[0], range[1], step)) {
     table.push_back({value, equation(value)});
   }
@@ -48,7 +50,8 @@ std::tuple<float, std::vector<std::array<float, 2>>> riemann_sum(
     for (const auto& tableEntry : table) {
       const int32_t index = vector_find_index(table, tableEntry);
       try {
-        auto midPointLValue = MID_POINT_FORMULA(tableEntry.at(0), table.at(index + 1)[0]);
+        auto midPointLValue =
+            midpoint_formula(tableEntry.at(0), table.at(index + 1)[0]);
         midPointTable.push_back({midPointLValue, equation(midPointLValue)});
       } catch (...) {
         break;
@@ -68,12 +71,9 @@ std::tuple<float, std::vector<std::array<float, 2>>> riemann_sum(
 }
 
 int main(int argc, char const* argv[]) {
-  const auto& result = riemann_sum([](const float x) {
-                                     return static_cast<float>(4 * x - pow(x, 2));
-                                   },
-                                   {0, 4},
-                                   "MRAM",
-                                   100);
+  const auto& result = riemann_sum(
+      [](const float x) { return static_cast<float>(4 * x - pow(x, 2)); },
+      {0, 4}, "MRAM", 100);
   const auto& sum = std::get<0>(result);
   const auto& table = std::get<1>(result);
 
